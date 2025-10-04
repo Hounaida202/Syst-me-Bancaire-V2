@@ -72,5 +72,75 @@ public class ClientDAO {
         }
     }
 
+    public static Client getClientByID(String idClient) {
+        String sql = "SELECT * FROM clients WHERE id_client = ?";
+
+        try (Connection conn = Database.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setObject(1, idClient);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    String id = rs.getString("id_client");
+                    String nom = rs.getString("nom");
+                    String email = rs.getString("email");
+
+                    return new Client(id, nom, email);
+                } else {
+                    return null;
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public static Client getClientByNom(String nom) {
+        String sql = "SELECT * FROM clients WHERE nom = ?";
+
+        try (Connection conn = Database.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, nom);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    String id = rs.getString("id_client");
+                    String email = rs.getString("email");
+                    return new Client(id, nom, email);
+                } else {
+                    return null;
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public static List<Client>  getAllclients() {
+        String sql = "SELECT * FROM clients";
+
+        List<Client> clients = new ArrayList<>();
+        try
+        {
+            Connection conn = Database.getConnection();
+            PreparedStatement stmt= conn.prepareStatement(sql);
+            ResultSet res = stmt.executeQuery();
+            while(res.next()){
+//                String id = res.getObject("id_client").toString();
+                String id = res.getString("id_client");
+                String nom = res.getString("nom");
+                String email = res.getString("email");
+                Client cl = new Client(id,nom,email);
+                clients.add(cl);
+            }
+            return clients;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
 }
