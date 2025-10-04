@@ -58,5 +58,19 @@ public class ClientDAO {
     }
 
 
+    public static void EditClient(Client client) {
+        String sql = "UPDATE clients SET nom = ?, email = ? WHERE id_client = ?";
+        try (Connection conn = Database.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, client.nom());
+            stmt.setString(2, client.email());
+            stmt.setString(3, client.id_client());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
 }
