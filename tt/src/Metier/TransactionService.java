@@ -33,4 +33,50 @@ public class TransactionService {
         TransactionDAO.addTransaction(transaction);
     }
 
+    public static void Fairevirement(){
+        System.out.println("entrer l id ce compte a virer:");
+        Scanner sc = new Scanner(System.in);
+        String id= sc.nextLine();
+        System.out.println("entrer le montant a virer:");
+        Double montant = sc.nextDouble();
+        sc.nextLine();
+        System.out.println("Veuillez choisir votre pays :");
+        String lieu = sc.nextLine();
+        Transaction.Type type = Transaction.Type.VIREMENT;
+        CompteDAO.virement(id, montant);
+        Transaction transaction = new Transaction(
+                UUID.randomUUID().toString(),
+                LocalDate.now(),
+                montant,
+                type,
+                lieu,
+                id
+        );
+        TransactionDAO.addTransaction(transaction);
+    }
+
+    public static void Faireversement(){
+        System.out.println("entrer le code de compte destination : ");
+        Scanner sc = new Scanner(System.in);
+        String destination= sc.nextLine();
+        System.out.println("entrer le code de compte source : ");
+        String source= sc.nextLine();
+        System.out.println("entrer le montant : ");
+        Double montant= sc.nextDouble();
+        sc.nextLine();
+        System.out.println("Veuillez choisir votre pays :");
+        String lieu = sc.nextLine();
+        Transaction.Type type = Transaction.Type.VERSEMENT;
+        CompteDAO.retrait(source,montant);
+        CompteDAO.virement(destination,montant);
+        Transaction transaction = new Transaction(
+                UUID.randomUUID().toString(),
+                LocalDate.now(),
+                montant,
+                type,
+                lieu,
+                source
+        );
+        TransactionDAO.addTransaction(transaction);
+    }
 }
