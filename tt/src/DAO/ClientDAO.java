@@ -89,6 +89,46 @@ public class CompteDAO {
         return null;
     }
 
+    public static Compte getCompteById(String id_compte) {
+        String sql = "SELECT * FROM comptes WHERE id_compte = ?";
+
+        try (Connection conn = Database.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, id_compte);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    String id = rs.getString("id_compte");
+                    double solde = rs.getDouble("solde");
+                    String id_client = rs.getString("id_client");
+
+                    // ⚠️ attention : rs.getDouble retourne 0.0 si NULL, donc il faut tester avec wasNull()
+                    double decouvert = rs.getDouble("decouvert");
+                    boolean hasDecouvert = !rs.wasNull();
+
+                    double taux = rs.getDouble("taux");
+                    boolean hasTaux = !rs.wasNull();
+
+                    // Si c’est un CompteCourant
+                    if (hasDecouvert) {
+                        return new CompteCourant(id, solde, id_client, decouvert);
+                    }
+                    // Si c’est un CompteEpargne
+                    else if (hasTaux) {
+                        return new CompteEpargne(id, solde, id_client, taux);
+                    }
+
+                } else {
+                    return null; // aucun compte trouvé
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
 
 
 }
